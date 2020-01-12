@@ -9,7 +9,7 @@ npm install
 npm run insert
 ```
 
-!!Crear indice de texto lo primero:
+!!Crear indice de texto lo primero, aunque no sepamos que es esto lo mejor es ejecutarlo en mongo tras el insert porque tarda bastante) :
 ```
 db.getCollection('index').createIndex(
    {
