@@ -36,7 +36,14 @@ async function insertDummyData (db) {
 				city: faker.address.city(),
 				bio: `Los índices son una forma muy eficiente de buscar los datos Juanchu por un valor específico y nos evita tener que recorrer toda la colección en busca de un dato específico.
 				Los índices en las bases de datos tradicionales se basan en Binary Tree Sort, y Mongo también.
-				Veamos de una forma muy resumida como funcionaría este tipo de algoritmo.`
+				Veamos de una forma muy resumida como funcionaría este tipo de algoritmo.`,
+				tags: [{
+					front: 'Vuejs',
+					back: 'Node'
+				},{
+					front: 'ReactJS',
+					back: 'Golang'
+				}]
 			})
 		} else if ([60,70,80,90,100].includes(i)){
 			dummyData.push({
@@ -45,7 +52,14 @@ async function insertDummyData (db) {
 				alias: 'Juanchu master',
 				city: 'Madrid',
 				email: 'NinjaMaster@email.com',
-				bio: `Full text Index: Indices de texto libre. Nos permite buscar el texto que hay en los documentos, es una búsqueda tipo Google. Al generar este tipo de índice crea una base de datos grande con todos los documentos de tipo texto (según los criterios que indiquemos) y a la hora de buscar nos muestras los elementos por relevancia (cuanto más aparezca la palabra que buscamos en el documento, más relevante se vuelve)`
+				bio: `Full text Index: Indices de texto libre. Nos permite buscar el texto que hay en los documentos, es una búsqueda tipo Google. Al generar este tipo de índice crea una base de datos grande con todos los documentos de tipo texto (según los criterios que indiquemos) y a la hora de buscar nos muestras los elementos por relevancia (cuanto más aparezca la palabra que buscamos en el documento, más relevante se vuelve)`,
+				tags: [{
+					front: 'Vuejs',
+					back: 'Node'
+				},{
+					front: 'ReactJS',
+					back: 'Golang'
+				}]
 			})
 		} else {
 			dummyData.push({
@@ -53,7 +67,14 @@ async function insertDummyData (db) {
 				lastName: faker.name.lastName(),
 				city: 'Madrid',
 				email: faker.internet.email(),
-				bio: faker.lorem.paragraphs(2)
+				bio: faker.lorem.paragraphs(2),
+				tags: [{
+					front: faker.lorem.word(),
+					back: faker.lorem.word()
+				},{
+					front: faker.lorem.word(),
+					back: faker.lorem.word()
+				}]
 			})
 		}
 		if (insertCount === 0 && dummyData.length > 0) {

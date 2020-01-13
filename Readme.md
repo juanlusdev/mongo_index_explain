@@ -160,7 +160,30 @@ Sorprendetemente ha tardado solo **12ms**
 Cosas que tenemos que tener en cuenta de los índices compuestos:
 
 * Tienen un límite de 32 campos
-* En los single no mucho pero en los compuestos sí que es importante el orden en el que definimos los índices
+* En un principio el orden en que definamos el índice no influye demasiado (menos en los $fullText que usaría como filtro inicial para hacer el de texto) a la hora de buscar pero si a la hora de ordenar nosotros añadiendo un sort a continuación del find. Partiendo del índice que hemos definido anteriormente no seria lo mismo hacer esto:
+
+```
+db.getCollection('index').find({ city: 'Madrid', lastName: 'Master', email: 'NinjaMaster@email.com'}).sort({ city: -1, email: 1  }).explain('executionStats')
+```
+
+Que hacer esto:
+
+```
+db.getCollection('index').find({ city: 'Madrid', lastName: 'Master', email: 'NinjaMaster@email.com'}).sort({ email: 1, city: -1  }).explain('executionStats')
+```
+O esto:
+
+```
+db.getCollection('index').find({ city: 'Madrid', lastName: 'Master', email: 'NinjaMaster@email.com'}).sort({ city: 1, email: 1  }).explain('executionStats')
+```
+
+La primera usa el índice directamente y no tiene que hacer nada más:
+
+![Captura-de-pantalla-2020-01-13-a-las-20.16.08](https://jlgarcia.fulldev.ninja/content/images/2020/01/Captura-de-pantalla-2020-01-13-a-las-20.16.08.png)
+
+Las otras dos pasan del índice para hacer la ordenación, la segunda porque directamente ordenamo primero por email y la segunda porque no es ninguna de las opciones factibles en cuanto a dirección **un índice usa solo dos tipos de ordenaciones: la misma con la que se ha definido y la que es directamente opuesta, es decir, si definimos un índice con `1,-1,1`, usaría el índice para ordenar bajo esa definición o con `-1,1-1`**
+
+![Captura-de-pantalla-2020-01-13-a-las-20.17.13](https://jlgarcia.fulldev.ninja/content/images/2020/01/Captura-de-pantalla-2020-01-13-a-las-20.17.13.png)
 
 ### Multikey Index (Indice con arrays en resumen)
 
@@ -177,6 +200,41 @@ A tener en cuenta:
 
 * Solo podemos tener índices con uno de los valores de tipo array, si intentamos tener dos nos dirá que nos dediquemos a la pintura
 * Si tenemos un índice con array e intentamos insertar en otro de los campos del índice un array nos dirá otra vez que lo nuestro es el arte
+* Podemos crear índices con campos con arrays de documentos, que funcionarían igual que los arrays normales si le indicamos uno de los campos del documento
+```
+db.getCollection('index').createIndex({ 'tags.front': -1 })
+db.getCollection('index').find({ 'tags.front': 'Vuejs' }).explain('executionStats')
+```
+
+![Captura-de-pantalla-2020-01-13-a-las-20.29.08](https://jlgarcia.fulldev.ninja/content/images/2020/01/Captura-de-pantalla-2020-01-13-a-las-20.29.08.png)
+
+Si no le indicamos un campo en concreto nos creará un índice pero solo funcionara con documentos completos, no con campos específicos. Borramos el índice anterior y creamos este:
+
+```
+db.getCollection('index').createIndex({ 'tags': -1 })
+```
+
+Ahora realizamos la misma búsqueda anterior:
+
+```
+db.getCollection('index').find({ 'tags.front': 'Vuejs' }).explain('executionStats')
+```
+
+![Captura-de-pantalla-2020-01-13-a-las-20.36.34](https://jlgarcia.fulldev.ninja/content/images/2020/01/Captura-de-pantalla-2020-01-13-a-las-20.36.34.png)
+
+Lo notamos con el tiempo que tarda pero podemos vemos como hace la búsqueda básica con **COLLSCAN**.
+Sin embargo si búscamos un documento al completo:
+
+```
+db.getCollection('index').find({ 'tags': {
+					front: 'Vuejs',
+					back: 'Node'
+				} }).explain('executionStats')
+```
+
+Vemos como tarda bastante menos y además nos indica que ha usado un índice
+
+![Captura-de-pantalla-2020-01-13-a-las-20.38.52](https://jlgarcia.fulldev.ninja/content/images/2020/01/Captura-de-pantalla-2020-01-13-a-las-20.38.52.png)
 
 ### Indice Full text(o campos con un montón de texto)
 
