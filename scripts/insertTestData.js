@@ -43,7 +43,11 @@ async function insertDummyData (db) {
 				},{
 					front: 'ReactJS',
 					back: 'Golang'
-				}]
+				}],
+				user_metadata: {
+					"clicks": 200,
+					"views": 1000
+				}
 			})
 		} else if ([60,70,80,90,100].includes(i)){
 			dummyData.push({
@@ -59,7 +63,11 @@ async function insertDummyData (db) {
 				},{
 					front: 'ReactJS',
 					back: 'Golang'
-				}]
+				}],
+				user_metadata: {
+					"images": 500,
+					"favorite_tags": ["games", "dogs"]
+				}
 			})
 		} else {
 			dummyData.push({
@@ -74,7 +82,11 @@ async function insertDummyData (db) {
 				},{
 					front: faker.lorem.word(),
 					back: faker.lorem.word()
-				}]
+				}],
+				user_metadata: {
+					"dynamic1": 200,
+					"dynamic2": 1000
+				}
 			})
 		}
 		if (insertCount === 0 && dummyData.length > 0) {
